@@ -7,11 +7,46 @@
    :east {:left :north, :right :south}
    :west {:left :south, :right :north}})
 
+(defn simplify [{north :north, south :south, west :west, east :east}]
+  {:north (- north south), :east (- east west)})
+
+(defn set-first-duplicate-location [{locations :locations, duplicate :first-duplicate, :as state}]
+  (let [location (simplify state)]
+    (if (and (not duplicate) (contains? locations location))
+      (assoc state :first-duplicate location)
+      state)))
+
+(defn move-once [state heading distance]
+  (-> state
+      (update heading + distance)
+      (set-first-duplicate-location)
+      (update :locations conj (simplify state))
+      (assoc :heading heading)))
+
 (defn move [{heading :heading :as state} [direction distance]]
   (let [new-heading (direction (heading next-direction))]
-    (-> state
-        (update new-heading + distance)
-        (assoc :heading new-heading))))
+    (loop [state state
+           distance distance]
+      (if (> distance 0)
+        (recur (move-once state new-heading 1) (dec distance))
+        state))))
+
+(defn start [heading]
+  {:heading heading
+   :locations #{{:north 0, :east 0}}
+   :first-duplicate nil
+   :north 0
+   :south 0
+   :west 0
+   :east 0})
+
+(defn walk [moves]
+  (loop [moves moves
+         state (start :north)]
+    (if (seq moves)
+      (let [next-state (move state (first moves))]
+        (recur (rest moves) next-state))
+      state)))
 
 (defn parse-direction [move]
   (let [letter (subs move 0 1)]
@@ -25,25 +60,19 @@
 (defn parse [move]
   [(parse-direction move) (parse-distance move)])
 
-(defn start [heading]
-  {:heading heading, :north 0, :south 0, :west 0, :east 0})
-
-(defn walk [moves]
-  (loop [moves moves
-         state (start :north)]
-    (if (seq moves)
-      (recur (rest moves) (move state (first moves)))
-      state)))
-
 (defn read-moves [file]
   (->>
     (split (slurp file) #",")
     (map trim)
     (map parse)))
 
-(defn count-blocks [{north :north, south :south, west :west, east :east}]
-  (+ (Math/abs (- north south)) (Math/abs (- east west))))
+(defn count-blocks [{north :north, east :east}]
+  (+ (Math/abs north) (Math/abs east)))
 
 (defn blocks [file]
-  (count-blocks (walk (read-moves file))))
+  (let [result (walk (read-moves file))
+        destination (simplify result)
+        first-duplicate (:first-duplicate result)]
+    {:total-distance (count-blocks destination)
+     :to-first-duplicate (count-blocks first-duplicate)}))
 
