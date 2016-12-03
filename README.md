@@ -1,36 +1,14 @@
 # advent-of-code
 
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
+My attempts at [Advent of Code 2016](http://adventofcode.com/2016). I'm planning on using Clojure for every task.
 
 ## Usage
 
-FIXME: explanation
+Run using `lein`
 
-    $ java -jar advent-of-code-0.1.0-standalone.jar [args]
+    lein run DAY INPUT_FILE
 
-## Options
+The first argument is the day, and the second if the path to the input file. For example
 
-FIXME: listing of options this app accepts.
+    lein run 1 /path/to/day-1-input
 
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2016 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
