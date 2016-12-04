@@ -69,7 +69,7 @@
 (defn count-blocks [{north :north, east :east}]
   (+ (Math/abs north) (Math/abs east)))
 
-(defn blocks [file]
+(defn run [file]
   (let [result (walk (read-moves file))
         destination (simplify result)
         first-duplicate (:first-duplicate result)]

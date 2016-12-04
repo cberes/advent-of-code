@@ -38,3 +38,6 @@
       (let [next-key (get-key start (first lines))]
         (recur (rest lines) next-key (conj combo next-key)))
       (apply str combo))))
+
+(defn run [file]
+  (password file))

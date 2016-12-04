@@ -27,5 +27,5 @@
     (map transpose)
     (mapcat identity))) ; this flattens one level of lists
 
-(defn triangles [file]
+(defn run [file]
   (count (filter triangle? (fix-triples (read-triples file)))))
