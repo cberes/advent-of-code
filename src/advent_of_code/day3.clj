@@ -16,5 +16,16 @@
     (map #(split % #"\s+"))
     (map #(map to-int %))))
 
+(defn transpose [[a b c]]
+  [[(nth a 0) (nth b 0) (nth c 0)]
+   [(nth a 1) (nth b 1) (nth c 1)]
+   [(nth a 2) (nth b 2) (nth c 2)]])
+
+(defn fix-triples [triples]
+  (->> triples
+    (partition 3)
+    (map transpose)
+    (mapcat identity))) ; this flattens one level of lists
+
 (defn triangles [file]
-  (count (filter triangle? (read-triples file))))
+  (count (filter triangle? (fix-triples (read-triples file)))))
