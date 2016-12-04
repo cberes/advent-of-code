@@ -1,5 +1,25 @@
 (ns advent-of-code.day4
-  (:use [clojure.string :only [split split-lines trim]]))
+  (:use [clojure.string :only [split-lines trim]]))
+
+(def letter-offset (int \a))
+(def num-letters 26)
+
+(defn shift [c times]
+  (if (= c \-)
+    \space
+    (-> c
+      (int)
+      (- letter-offset)
+      (+ times)
+      (mod num-letters)
+      (+ letter-offset)
+      (char))))
+
+(defn decrypt [[name sector]]
+  (let [shift-times (Integer/parseInt sector)
+        shifted-chars (map #(shift % shift-times) name)
+        shifted (apply str shifted-chars)]
+    [shifted sector]))
 
 (defn frequency-comparator [a b]
   (if (= (second a) (second b))
@@ -39,6 +59,4 @@
   (->> file
     (read-names)
     (filter real?)
-    (map second)
-    (map #(Integer/parseInt %))
-    (reduce +)))
+    (map decrypt)))
