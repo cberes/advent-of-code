@@ -22,7 +22,7 @@
 (defn most-frequent [chars]
   (->> chars
     (char-frequencies)
-    (apply max-key val)))
+    (apply min-key val)))
 
 (defn run [file]
   (->> file
