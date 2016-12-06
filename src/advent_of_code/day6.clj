@@ -23,13 +23,13 @@
 (defn get-target-char [chars]
   (->> chars
     (char-frequencies)
-    (apply min-key val)))
+    (apply min-key val)
+    (first)))
 
 (defn pairs-to-string [pairs]
   (->> pairs
     (sort #(- (first %1) (first %2)))
     (map second)
-    (map first)
     (apply str)))
 
 (defn run [file]
