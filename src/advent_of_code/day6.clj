@@ -10,9 +10,10 @@
 (defn chars-by-index [messages]
   (->> messages
     (seq)
-    (map #(map vector (range (count %1)) %1))
+    (map #(map vector (range (count %1)) %1)) ; maps chars to pairs with that char's index
     (mapcat identity)
-    (group-by first)))
+    (group-by first)
+    (into [])))
 
 (defn char-frequencies [chars]
   (->> chars
@@ -24,13 +25,16 @@
     (char-frequencies)
     (apply min-key val)))
 
-(defn run [file]
-  (->> file
-    (read-messages)
-    (chars-by-index)
-    (into [])
-    (map (fn [[index chars]] [index (most-frequent chars)]))
+(defn pairs-to-string [pairs]
+  (->> pairs
     (sort #(- (first %1) (first %2)))
     (map second)
     (map first)
     (apply str)))
+
+(defn run [file]
+  (->> file
+    (read-messages)
+    (chars-by-index)
+    (map (fn [[index chars]] [index (most-frequent chars)]))
+    (pairs-to-string)))
