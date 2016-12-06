@@ -20,7 +20,7 @@
     (map second)
     (frequencies)))
 
-(defn most-frequent [chars]
+(defn get-target-char [chars]
   (->> chars
     (char-frequencies)
     (apply min-key val)))
@@ -36,5 +36,5 @@
   (->> file
     (read-messages)
     (chars-by-index)
-    (map (fn [[index chars]] [index (most-frequent chars)]))
+    (map (fn [[index chars]] [index (get-target-char chars)]))
     (pairs-to-string)))
