@@ -1,7 +1,10 @@
 (ns advent-of-code.core-test
-  (:require [clojure.test :refer :all]
-            [advent-of-code.core :refer :all]))
+  (:use [clojure.test :refer :all])
+  (:use [advent-of-code.day7 :only [get-all-aba get-all-abba]]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest abba-test
+  (testing "day 7"
+    (is (= (get-all-aba "aawbwnwnee") ["wbw" "wnw" "nwn"]))
+    (is (= (get-all-aba "wbwnwn") ["wbw" "wnw" "nwn"]))
+    (is (= (get-all-abba "aawbbwnnwee") ["wbbw" "wnnw"]))
+    (is (= (get-all-abba "wbbwnnw") ["wbbw" "wnnw"]))))
