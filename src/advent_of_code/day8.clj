@@ -86,10 +86,26 @@
     (split-lines)
     (map trim)))
 
-(defn run [file]
+(defn get-cell [x y state]
+  (first (filter #(and (= x (:x %1)) (= y (:y %1))) state)))
+
+(defn on? [x y state]
+  (let [cell (get-cell x y state)]
+    (= :on (:state cell))))
+
+(defn print-screen [state]
+  (dotimes [y height]
+    (dotimes [x width]
+      (print (if (on? x y state) "#" ".")))
+    (println)))
+
+(defn execute [file]
   (->> file
     (read-lines)
     (map parse-cmd)
-    (process)
-    (filter #(= :on (:state %)))
-    (count)))
+    (process)))
+
+(defn run [file]
+  (let [state (execute file)]
+    (print-screen state)
+    (count (filter #(= :on (:state %)) state))))
