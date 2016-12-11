@@ -12,3 +12,7 @@ The first argument is the day, and the second is the path to the input file. For
 
     lein run 1 /path/to/day-1-input
 
+## Update
+
+The first ten days were fun, but the last two days have taken too much of my time. I would like more opportunities to use Clojure, but I don't have the time to complete any more of these challenges.
+
