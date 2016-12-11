@@ -1,12 +1,9 @@
 (ns advent-of-code.day10
-  (:use [clojure.string :only [split-lines trim]]))
+  (:use [advent-of-code.util :only [enumerate read-lines to-int contains-value?]]))
 
 (def input-pattern #"^\s*value\s+(\d+)\s+goes\s+to\s+bot\s+(\d+)\s*$")
 
 (def output-pattern #"^\s*bot\s+(\d+)\s+gives\s+low\s+to\s+(\w+)\s+(\d+)\s+and\s+high\s+to\s+(\w+)\s+(\d+)\s*$")
-
-(defn to-int [s]
-  (Integer/parseInt s))
 
 (defn parse-input [id s]
   (when-let [matches (re-find input-pattern s)]
@@ -72,9 +69,6 @@
     (process-output command state)
     (process-input command state)))
 
-(defn contains-value? [coll value]
-  (some #(= value %) coll))
-
 (defn target-state [state]
   (->> state
     (filter #(and (contains-value? (:values %1) 17) (contains-value? (:values %1) 61)))
@@ -92,16 +86,10 @@
         (process remaining (process-cmd next-command state)))
       state)))
 
-(defn read-lines [file]
-  (->> file
-    (slurp)
-    (split-lines)
-    (map trim)))
-
 (defn run [file]
   (->> file
     (read-lines)
-    (map vector (range))
+    (enumerate)
     (map parse-command)
     (process)
     (filter #(seq (:values %)))))

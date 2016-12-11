@@ -1,5 +1,5 @@
 (ns advent-of-code.day8
-  (:use [clojure.string :only [split-lines trim]]))
+  (:use [advent-of-code.util :only [read-lines to-int]]))
 
 (def width 50)
 (def height 6)
@@ -60,9 +60,6 @@
       (process (rest cmds) (process-cmd (first cmds) state))
       state)))
 
-(defn to-int [s]
-  (Integer/parseInt s))
-
 (defn parse-cmd-as-rect [cmd]
   (when-let [matches (re-find rect-pattern cmd)]
     [:rect (to-int (nth matches 1)) (to-int (nth matches 2))]))
@@ -79,12 +76,6 @@
   (or (parse-cmd-as-rect cmd)
       (parse-cmd-as-rot-row cmd)
       (parse-cmd-as-rot-col cmd)))
-
-(defn read-lines [file]
-  (->> file
-    (slurp)
-    (split-lines)
-    (map trim)))
 
 (defn get-cell [x y state]
   (first (filter #(and (= x (:x %1)) (= y (:y %1))) state)))

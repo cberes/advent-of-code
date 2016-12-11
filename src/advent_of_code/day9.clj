@@ -1,5 +1,6 @@
 (ns advent-of-code.day9
-  (:use [clojure.string :only [blank? split-lines trim]]))
+  (:use [clojure.string :only [blank?]])
+  (:use [advent-of-code.util :only [read-lines to-int]]))
 
 (def compression-pattern #"(\w*)(\(\d+x\d+\))?")
 
@@ -10,7 +11,7 @@
 
 (defn parse-repeat [s]
   (let [[letters times] (rest (re-find repeat-pattern s))]
-    [(Integer/parseInt letters) (Integer/parseInt times)]))
+    [(to-int letters) (to-int times)]))
 
 (defn do-decompress [letters s]
   [(subs s 0 letters) (subs s letters)])
@@ -26,12 +27,6 @@
                 [insert next] (do-decompress letters (subs s (count repetition)))]
             (decompress (+ result (* times (decompress insert))) next)))
         (decompress (+ result (count text)) (subs s (count text)))))))
-
-(defn read-lines [file]
-  (->> file
-    (slurp)
-    (split-lines)
-    (map trim)))
 
 (defn run [file]
   (->> file

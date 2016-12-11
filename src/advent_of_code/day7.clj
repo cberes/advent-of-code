@@ -1,5 +1,5 @@
 (ns advent-of-code.day7
-  (:use [clojure.string :only [split-lines trim]]))
+  (:use [advent-of-code.util :only [read-lines]]))
 
 (def hypernet-pattern (re-pattern "\\[([a-z]+?)\\]"))
 
@@ -40,12 +40,6 @@
         all-supernet-aba (set (flatten (map get-all-aba supernets)))
         all-hypernet-aba (set (flatten (map get-all-aba hypernets)))]
     (some #(contains? all-hypernet-aba %) (map invert all-supernet-aba))))
-
-(defn read-lines [file]
-  (->> file
-    (slurp)
-    (split-lines)
-    (map trim)))
 
 (defn run [file]
   (let [addresses (read-lines file)]

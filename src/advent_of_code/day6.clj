@@ -1,16 +1,10 @@
 (ns advent-of-code.day6
-  (:use [clojure.string :only [split-lines trim]]))
-
-(defn read-messages [file]
-  (->> file
-    (slurp)
-    (split-lines)
-    (map trim)))
+  (:use [advent-of-code.util :only [enumerate read-lines]]))
 
 (defn chars-by-index [messages]
   (->> messages
     (seq)
-    (map #(map vector (range (count %1)) %1)) ; maps chars to pairs with that char's index
+    (map enumerate)
     (mapcat identity)
     (group-by first)
     (into [])))
@@ -34,7 +28,7 @@
 
 (defn run [file]
   (->> file
-    (read-messages)
+    (read-lines)
     (chars-by-index)
     (map (fn [[index chars]] [index (get-target-char chars)]))
     (pairs-to-string)))
