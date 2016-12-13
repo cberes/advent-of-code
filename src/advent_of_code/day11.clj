@@ -17,8 +17,9 @@
   (let [generators (parse-generators line)
         microchips (parse-microchips line)]
     (when (or (seq generators) (seq microchips))
-      (mapcat identity [(map (fn [g] {:element g, :type :generator, :floor floor}) generators)
-                        (map (fn [m] {:element m, :type :microchip, :floor floor}) microchips)]))))
+      (-> []
+        (into (map (fn [g] {:element g, :type :generator, :floor floor}) generators))
+        (into (map (fn [m] {:element m, :type :microchip, :floor floor}) microchips))))))
 
 (defn parse-lines [lines]
   (->> lines
@@ -73,6 +74,9 @@
     (range)
     (filter #(= (:elevator state) (:floor (nth (:items state) %))))))
 
+(defn update-floor [op item]
+  (update item :floor op))
+
 ; TODO could refactor next 2 methods to share code
 (defn single-floor-change [state op]
   (let [indices (indices-to-change state)]
@@ -80,26 +84,27 @@
            (-> state
              (update :moves inc)
              (update :elevator op)
-             (assoc :items (update (:items state) index #(update % :floor op)))))
+             (update-in [:items index] (partial update-floor op))))
          indices)))
 
 (defn double-floor-change [state op]
-  (let [update-floor #(update % :floor op)
-        single-indices (indices-to-change state)
+  (let [single-indices (indices-to-change state)
         indices (for [a single-indices b single-indices :when (< a b)] [a b])]
     (map (fn [[a b]]
            (-> state
              (update :moves inc)
              (update :elevator op)
-             (assoc :items (update (update (:items state) a update-floor) b update-floor))))
+             (update-in [:items a] (partial update-floor op))
+             (update-in [:items b] (partial update-floor op))))
          indices)))
 
 (defn next-states [state]
   (filter valid?
-          (concat (single-floor-change state inc)
-                  (double-floor-change state inc)
-                  (single-floor-change state dec)
-                  (double-floor-change state dec))))
+          (-> []
+            (into (single-floor-change state inc))
+            (into (double-floor-change state inc))
+            (into (single-floor-change state dec))
+            (into (double-floor-change state dec)))))
 
 (defn done? [state]
   (every? #(= (:floor %) (dec (:floors state))) (:items state)))
@@ -117,8 +122,18 @@
                (doall (concat (rest states-to-process) new-states))
                (into visited (map item-floors new-states)))))))
 
+(defn create-items-for-part-2 []
+  [{:element "dilithium", :type :generator, :floor 0}
+   {:element "dilithium", :type :microchip, :floor 0}
+   {:element "elerium", :type :generator, :floor 0}
+   {:element "elerium", :type :microchip, :floor 0}])
+
+(defn add-items-for-part-2 [state]
+  (update state :items #(into % (create-items-for-part-2))))
+
 (defn run [file]
   (->> file
     (read-state)
+    (add-items-for-part-2)
     (solve)
     (:moves)))
