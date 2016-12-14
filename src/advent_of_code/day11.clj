@@ -1,7 +1,10 @@
 (ns advent-of-code.day11
+  (:use [clojure.data.priority-map])
   (:use [advent-of-code.util :only [read-lines enumerate]]))
 
 (def elevator-start 0)
+
+(def priority-multiplier 5)
 
 (def generator-pattern #"(\w+)\s+generator")
 
@@ -109,17 +112,36 @@
 (defn done? [state]
   (every? #(= (:floor %) (dec (:floors state))) (:items state)))
 
+; idea for priority calculation came from
+; https://www.reddit.com/r/adventofcode/comments/5hoia9/2016_day_11_solutions/db1zbu0/
+(defn priority [state]
+  (let [top-floor (dec (:floors state))]
+    (- (:moves state)
+       (* priority-multiplier (->> state
+                                (:items)
+                                (map :floor)
+                                (filter #(= % top-floor))
+                                (count))))))
+
+(defn add-to-priority-map
+  ([states] (add-to-priority-map (priority-map) states))
+  ([initial-map states]
+    (->> states
+      (map (fn [state] [state (priority state)]))
+      (into initial-map))))
+
 (defn solve [initial-state]
   (loop [state initial-state
-         states-to-process (next-states initial-state)
-         visited (into #{initial-state} (map item-floors states-to-process))]
+         states-to-process (add-to-priority-map (next-states initial-state))
+         visited (into #{initial-state} (map item-floors (next-states initial-state)))]
     (if (done? state)
       state
-      (let [new-states (->> state
+      (let [next-state (first (peek states-to-process))
+            new-states (->> next-state
                          (next-states)
                          (remove #(contains? visited (item-floors %))))]
-        (recur (first states-to-process)
-               (doall (concat (rest states-to-process) new-states))
+        (recur next-state
+               (add-to-priority-map (pop states-to-process) new-states)
                (into visited (map item-floors new-states)))))))
 
 (defn create-items-for-part-2 []
