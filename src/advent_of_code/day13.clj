@@ -48,11 +48,11 @@
     (loop [position (to-state initial-position 0)
            moves-to-consider (get-next-moves position wall?)
            visited (add-visited #{initial-position} moves-to-consider)]
-      (if (= goal (:position position))
-        (:moves position)
-        (let [next-position (first moves-to-consider)
-              next-moves (get-next-moves next-position wall?)
-              new-moves (remove #(contains? visited (:position %)) next-moves)]
+      (let [next-position (first moves-to-consider)
+            next-moves (get-next-moves next-position wall?)
+            new-moves (remove #(contains? visited (:position %)) next-moves)]
+        (if (= 50 (:moves next-position))
+          (count visited)
           (recur
             next-position
             (doall (concat (rest moves-to-consider) new-moves))
