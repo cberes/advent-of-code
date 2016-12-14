@@ -2,7 +2,7 @@
   (:use [clojure.string :only [split]])
   (:use [advent-of-code.util :only [read-lines enumerate to-int]]))
 
-(def initial-state {})
+(def initial-state {"c" 1})
 
 (defn parse-value [s]
   (try
