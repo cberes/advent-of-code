@@ -2,6 +2,8 @@
   (:use [digest :only [md5]])
   (:use [advent-of-code.util :only [read-lines enumerate]]))
 
+(def stretch-iterations 2016)
+
 (def target-key-count 64)
 
 (def repeat-3-pattern #"(\w)\1\1")
@@ -50,8 +52,14 @@
         complete-keys
         (recur (rest hashes) (extract-keys (first hashes) state))))))
 
+(defn stretch-hash [text]
+  (loop [hash text n 0]
+    (if (> n stretch-iterations)
+      hash
+      (recur (md5 hash) (inc n)))))
+
 (defn hashes [prefix]
-  (map (fn [i] [i (md5 (str prefix i))]) (range)))
+  (map (fn [i] [i (stretch-hash (str prefix i))]) (range)))
 
 (defn read-salt [file]
   (first (read-lines file)))
