@@ -7,7 +7,8 @@
    3 {:positions  7 :position 1}
    4 {:positions 13 :position 7}
    5 {:positions  5 :position 1}
-   6 {:positions  3 :position 0}})
+   6 {:positions  3 :position 0}
+   7 {:positions 11 :position 0}})
 
 (defn update-position [{positions :positions position :position}]
   (mod (inc position) positions)) 
