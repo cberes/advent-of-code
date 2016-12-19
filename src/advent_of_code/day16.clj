@@ -1,16 +1,17 @@
 (ns advent-of-code.day16
   (:use [advent-of-code.util :only [read-lines update-values]]))
 
-(def target-length 272)
+(def target-length 35651584)
 
 (defn checksum
-  ([s] (checksum s ""))
+  ([s] (checksum (into [] s) []))
   ([s cs]
-   (cond
-     (and (empty? s) (odd? (count cs))) cs
-     (and (empty? s) (even? (count cs))) (checksum cs)
-     :else (let [[a b] (take 2 s)]
-             (checksum (subs s 2) (str cs (if (= a b) \1 \0)))))))
+   (loop [s s cs cs]
+     (cond
+       (and (empty? s) (odd? (count cs))) (apply str cs)
+       (and (empty? s) (even? (count cs))) (recur cs [])
+       :else (let [[a b] (take 2 s)]
+               (recur (drop 2 s) (conj cs (if (= a b) \1 \0))))))))
 
 (defn copy [a]
   (str a "0" (->> a
@@ -24,7 +25,6 @@
       {:data xdata :checksum (checksum xdata)})
     (recursive-copy target (copy data))))
 
-
 (defn read-input [file]
   (->> file
     (read-lines)
@@ -33,4 +33,5 @@
 (defn run [file]
   (->> file
     (read-input)
-    (recursive-copy target-length)))
+    (recursive-copy target-length)
+    (:checksum)))
