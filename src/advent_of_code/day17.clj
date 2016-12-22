@@ -35,7 +35,7 @@
     (update :moves conj (:letter move))
     (assoc :position [(+ x (:x move)) (+ y (:y move))])))
 
-(defn solve [start initial-code]
+(defn solve-shortest [start initial-code]
   (loop [possible-states [{:code (into [] initial-code), :position start, :moves []}]]
     (let [{position :position, moves :moves, code :code, :as state} (first possible-states)]
       (if (= position goal)
