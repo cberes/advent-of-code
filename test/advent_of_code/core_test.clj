@@ -1,7 +1,8 @@
 (ns advent-of-code.core-test
   (:use [clojure.test :refer :all])
-  (:use [advent-of-code.day7 :only [get-all-aba get-all-abba]])
-  (:use [advent-of-code.day9 :only [find-repetition]]))
+  (:use [advent-of-code.day7  :only [get-all-aba get-all-abba]])
+  (:use [advent-of-code.day9  :only [find-repetition]])
+  (:use [advent-of-code.day17 :only [solve]]))
 
 (deftest abba-test
   (testing "day 7"
@@ -17,3 +18,9 @@
     (is (= (find-repetition "(50x51)abc") ["" "(50x51)"]))
     (is (= (find-repetition "abc(50x51)def") ["abc" "(50x51)"]))
     (is (= (find-repetition "[[]//abc") ["" nil]))))
+
+(deftest solve-vault-test
+  (testing "day 17"
+    (is (= (solve [0 0] "ihgpwlah") "DDRRRD"))
+    (is (= (solve [0 0] "kglvqrro") "DDUDRLRRUDRD"))
+    (is (= (solve [0 0] "ulqzkmiv") "DRURDRUDDLLDLUURRDULRLDUUDDDRR"))))
