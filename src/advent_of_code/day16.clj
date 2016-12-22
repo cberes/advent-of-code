@@ -1,5 +1,5 @@
 (ns advent-of-code.day16
-  (:use [advent-of-code.util :only [read-lines update-values]]))
+  (:use [advent-of-code.util :only [read-lines]]))
 
 (def target-length 35651584)
 

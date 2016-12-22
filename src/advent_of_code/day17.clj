@@ -1,6 +1,6 @@
 (ns advent-of-code.day17
   (:use [digest :only [md5]])
-  (:use [advent-of-code.util :only [read-lines update-values]]))
+  (:use [advent-of-code.util :only [read-lines]]))
 
 (def start [0 0])
 (def goal [3 3])
