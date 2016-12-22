@@ -1,7 +1,7 @@
 (ns advent-of-code.day18
   (:use [advent-of-code.util :only [read-lines]]))
 
-(def target-rows 40)
+(def target-rows 400000)
 
 (defn safe? [tile]
   (= tile \.))
@@ -34,27 +34,22 @@
   (->> previous
     (count)
     (range 0)
-    (map (partial new-cell previous))
-    (apply str)))
-
-(defn build-rows [n rows]
-  (if (= (count rows) n)
-    rows
-    (let [new-row (build-row (last rows))]
-      (build-rows n (conj rows new-row)))))
+    (map (partial new-cell previous))))
 
 (defn safe-count-row [row]
   (->> row
-    (into [])
     (filter safe?)
     (count)))
 
-(defn safe-count
-  ([rows] (safe-count rows 0))
-  ([rows total]
-   (if (empty? rows)
-     total
-     (safe-count (rest rows) (+ (safe-count-row (first rows)) total)))))
+(defn count-safe-tiles [n row]
+  (loop [n n
+         last-row (into [] row)
+         total 0]
+    (if (= 0 n)
+      total
+      (let [current-row-count (safe-count-row last-row)
+            new-row (build-row last-row)]
+        (recur (dec n) new-row (+ current-row-count total))))))
 
 (defn read-first-row [file]
   (->> file
@@ -64,7 +59,5 @@
 (defn run [file]
   (->> file
     (read-first-row)
-    (vector)
-    (build-rows target-rows)
-    (safe-count)))
+    (count-safe-tiles target-rows)))
 
