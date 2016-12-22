@@ -44,6 +44,17 @@
               next-states (map (partial get-next-state state) next-moves)]
           (recur (doall (concat (rest possible-states) next-states))))))))
 
+(defn solve-longest [start initial-code]
+  (loop [possible-states [{:code (into [] initial-code), :position start, :moves []}]
+         longest-solution -1]
+    (let [{position :position, moves :moves, code :code, :as state} (first possible-states)]
+      (cond
+        (nil? state) longest-solution
+        (= position goal) (recur (rest possible-states) (count moves))
+        :else (let [next-moves (valid-moves position code)
+                    next-states (map (partial get-next-state state) next-moves)]
+                (recur (doall (concat (rest possible-states) next-states)) longest-solution))))))
+
 (defn read-input [file]
   (->> file
     (read-lines)
@@ -52,4 +63,4 @@
 (defn run [file]
   (->> file
     (read-input)
-    (solve start)))
+    (solve-longest start)))

@@ -2,7 +2,7 @@
   (:use [clojure.test :refer :all])
   (:use [advent-of-code.day7  :only [get-all-aba get-all-abba]])
   (:use [advent-of-code.day9  :only [find-repetition]])
-  (:use [advent-of-code.day17 :only [solve]]))
+  (:use [advent-of-code.day17 :only [solve solve-longest]]))
 
 (deftest abba-test
   (testing "day 7"
@@ -23,4 +23,7 @@
   (testing "day 17"
     (is (= (solve [0 0] "ihgpwlah") "DDRRRD"))
     (is (= (solve [0 0] "kglvqrro") "DDUDRLRRUDRD"))
-    (is (= (solve [0 0] "ulqzkmiv") "DRURDRUDDLLDLUURRDULRLDUUDDDRR"))))
+    (is (= (solve [0 0] "ulqzkmiv") "DRURDRUDDLLDLUURRDULRLDUUDDDRR"))
+    (is (= (solve-longest [0 0] "ihgpwlah") 370))
+    (is (= (solve-longest [0 0] "kglvqrro") 492))
+    (is (= (solve-longest [0 0] "ulqzkmiv") 830))))
