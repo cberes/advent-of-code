@@ -4,6 +4,9 @@
 (defn to-int [s]
   (Integer/parseInt s))
 
+(defn to-long [s]
+  (Long/parseLong s))
+
 (defn read-lines [file]
   (->> file
     (slurp)
