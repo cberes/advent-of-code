@@ -12,14 +12,14 @@
 
 (defn find-min [ranges]
   (loop [ranges ranges
+         allowed-count 0
          max-blocked 0]
     (if (empty? ranges)
-      (inc max-blocked)
+      (+ allowed-count (- 4294967296 (inc max-blocked)))
       (let [[low high] (first ranges)]
-        (if (< (inc max-blocked) low)
-          (inc max-blocked)
-          (recur (rest ranges)
-                 (max max-blocked high)))))))
+        (recur (rest ranges)
+               (if (< (inc max-blocked) low) (+ allowed-count (- low (inc max-blocked))) allowed-count)
+               (max max-blocked high))))))
 
 (defn run [file]
   (->> file
