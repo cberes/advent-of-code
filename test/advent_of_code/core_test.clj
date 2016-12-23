@@ -37,5 +37,4 @@
 
 (deftest white-elephant-test
   (testing "day 19"
-    (is (= (play-game 5) 3))
-    (is (= (play-game 3018458) 1842613))))
+    (is (= (play-game 5) 2))))
