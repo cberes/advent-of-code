@@ -14,21 +14,22 @@
     (case (first tokens)
       "inc" [:inc (second tokens)]
       "dec" [:dec (second tokens)]
-      "jnz" [:jnz (parse-value (second tokens)) (to-int (last tokens))]
-      "cpy" [:cpy (parse-value (second tokens)) (last tokens)])))
+      "jnz" [:jnz (parse-value (second tokens)) (parse-value (last tokens))]
+      "cpy" [:cpy (parse-value (second tokens)) (last tokens)]
+      nil)))
 
 (defn get-register [state register]
   (or (state register) 0))
-
-(defn get-jnz-offset [state [op value offset]]
-  (if (not= 0 (if (integer? value) value (get-register state value)))
-    offset
-    1))
 
 (defn get-value [state source]
   (if (integer? source)
     source
     (get-register state source)))
+
+(defn get-jnz-offset [state [op value offset]]
+  (if (not= 0 (get-value state value))
+    (get-value state offset)
+    1))
 
 (defn process [commands]
   (loop [index 0
