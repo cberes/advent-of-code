@@ -31,9 +31,21 @@
     (rotate-left n v)
     (rotate-right n v)))
 
-(defn command-rotate-extra [[letter] v]
+(defn rotate-times [i]
+  (+ i (if (> i 3) 2 1)))
+
+(defn undo-rotate-times [char-index coll]
+  (let [length (count coll)]
+    (->> (range 0 length)
+      (map (fn [i] [(rotate-times i) (mod (+ i (rotate-times i)) length)]))
+      (filter #(= (second %) char-index))
+      (map first))))
+
+(defn command-rotate-extra [[dir letter] v]
   (let [index (.indexOf v letter)]
-    (rotate-right (+ (inc index) (if (> index 3) 1 0)) v)))
+    (if (= dir :right)
+      (rotate-right (rotate-times index) v)
+      (rotate-left (last (undo-rotate-times index v)) v))))
 
 (defn command-reverse [[x y] v]
   (-> []
@@ -66,7 +78,7 @@
 (defn parse-rotate-extra [s]
   (let [matches (first (re-seq #"^rotate\s+based\s+on\s+position\s+of\s+letter\s+(.)$" s))]
     (when (seq matches)
-      {:f command-rotate-extra, :cmd :rotate-extra, :args [(first (last matches))]})))
+      {:f command-rotate-extra, :cmd :rotate-extra, :args [:right (first (last matches))]})))
 
 (defn parse-reverse [s]
   (let [matches (first (re-seq #"^reverse\s+positions\s+(\d+)\s+through\s+(\d+)$" s))]
@@ -91,6 +103,21 @@
     (read-lines)
     (map parse-command)))
 
+(defn swap-direction [dir]
+  (if (= dir :left) :right :left))
+
+(defn undo-command [{cmd-type :cmd args :args :as command}]
+  (assoc command :args (cond
+                         (= cmd-type :rotate) [(swap-direction (first args)) (second args)]
+                         (= cmd-type :rotate-extra) [(swap-direction (first args)) (second args)]
+                         (= cmd-type :move) [(second args) (first args)]
+                         :else args)))
+
+(defn undo-commands [commands]
+  (->> commands
+    (reverse)
+    (map undo-command)))
+
 (defn process [start commands]
   (if (empty? commands)
     (apply str start)
@@ -100,5 +127,6 @@
 (defn run [file]
   (->> file
     (read-commands)
-    (process (into [] "abcdefgh"))))
+    (undo-commands)
+    (process (into [] "fbgdceah"))))
 
