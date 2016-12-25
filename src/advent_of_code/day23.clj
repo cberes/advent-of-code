@@ -3,7 +3,7 @@
   (:use [advent-of-code.util :only [read-lines enumerate to-int]])
   (:use [advent-of-code.day12 :only [parse-command parse-value get-value get-jnz-offset]]))
 
-(def initial-state {"a" 7})
+(def initial-state {"a" 12})
 
 (defn parse-toggle [s]
   (let [tokens (split s #"\s+")]
