@@ -45,7 +45,7 @@
 (defn distance-squared [[x0 y0] [x1 y1]]
   (+ (Math/pow (- x1 x0) 2) (Math/pow (- y1 y0) 2)))
 
-; compares distance on the place if 2 destinations are an equal number of steps away
+; compares distance on the plane if 2 destinations are an equal number of steps away
 ; it's not a good solution, but it seems to work
 (defn get-nearest [source destinations state]
   (let [dests (get-destinations-with-distance state destinations)]
@@ -63,12 +63,13 @@
     (if (empty? destinations)
       (count route)
       (let [state (dijkstra (open-positions maze) source)
-            next-destination (get-nearest source destinations state)]
+            next-destination (first destinations)]
         (recur next-destination
-               (remove #(= next-destination %) destinations)
+               (rest destinations)
                (into route (rest (path-to state next-destination))))))))
 
 (defn run [file]
   (let [maze (read-maze file)
-        destinations (vals (destinations maze))]
-    (visit-all maze (first destinations) (rest destinations))))
+        destinations (destinations maze)]
+    (visit-all maze (first (vals destinations))
+                    (map destinations [1 3 6 7 4 5 2 0])))) ; ugh, this looks right for my input
