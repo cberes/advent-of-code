@@ -36,12 +36,25 @@
     (filter #(:open (second %)))
     (map first)))
 
-(defn get-nearest [destinations state]
+(defn get-destinations-with-distance [state destinations]
   (->> destinations
     (map (fn [vertex] {vertex (:distance (state vertex))}))
     (apply merge)
-    (apply min-key val)
-    (first)))
+    (sort-by val)))
+
+(defn distance-squared [[x0 y0] [x1 y1]]
+  (+ (Math/pow (- x1 x0) 2) (Math/pow (- y1 y0) 2)))
+
+; compares distance on the place if 2 destinations are an equal number of steps away
+; it's not a good solution, but it seems to work
+(defn get-nearest [source destinations state]
+  (let [dests (get-destinations-with-distance state destinations)]
+    (if (or (= (count dests) 1) (< (val (first dests)) (val (second dests))))
+      (first (first dests))
+      (->> dests
+        (take 2)
+        (map first)
+        (apply min-key (partial distance-squared source))))))
 
 (defn visit-all [{maze :maze} start initial-destinations]
   (loop [source start
@@ -50,7 +63,7 @@
     (if (empty? destinations)
       (count route)
       (let [state (dijkstra (open-positions maze) source)
-            next-destination (get-nearest destinations state)]
+            next-destination (get-nearest source destinations state)]
         (recur next-destination
                (remove #(= next-destination %) destinations)
                (into route (rest (path-to state next-destination))))))))
